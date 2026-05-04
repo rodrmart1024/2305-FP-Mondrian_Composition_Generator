@@ -2,23 +2,25 @@ import sys
 import random
 from PySide6 import QtWidgets, QtCore, QtGui
 
+CANVAS_WIDTH = 960
+CANVAS_HEIGHT = 1000
 
 def build_grid(vertical_lines, horizontal_lines):
-    CANVAS_WIDTH = 960
-    CANVAS_HEIGHT = 1000
+    '''Function that Creates a list of random x y positions within a range'''
     vert_x_locations = []
     horiz_y_locations = []
 
     paint_x_range = range(50, CANVAS_WIDTH - 50)
     random_x_lines = random.sample(paint_x_range, vertical_lines)
-    for lines in sorted(random_x_lines):
-        vert_x_locations.append(lines)
+    for xlines in sorted(random_x_lines):
+        vert_x_locations.append(xlines)
 
     paint_y_range = range(50, CANVAS_HEIGHT - 50)
     random_y_lines = random.sample(paint_y_range, horizontal_lines)
-    for lines in sorted(random_y_lines):
-        horiz_y_locations.append(lines)
+    for ylines in sorted(random_y_lines):
+        horiz_y_locations.append(ylines)
 
+    return vert_x_locations, horiz_y_locations
 
 def build_colored_squares(square_amount, saturation):
     pass
@@ -138,7 +140,11 @@ class MondrianUI(QtWidgets.QDialog):
         fontsize = int(self.fontsize_input.currentText())
         saturation = int(self.saturation_percent_input.currentText())
 
-        build_grid(vertical_lines, horizontal_lines)
+        vert_x_locations, horiz_y_loactions = build_grid(vertical_lines,
+                                                         horizontal_lines)
+        self.canvas.vert_x_locations = vert_x_locations
+        self.canvas.horiz_y_locations = horiz_y_loactions
+        
         build_colored_squares(square_amount, saturation)
         build_signature(name, typeface, fontsize)
 
@@ -148,6 +154,8 @@ class MondrianCanvas(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         self.setMinimumSize(960, 1000)
+        self.vert_x_locations = []
+        self.horiz_y_locations = []
 
     def paintEvent(self, event):
         paint = QtGui.QPainter(self)
