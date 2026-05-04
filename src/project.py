@@ -4,13 +4,27 @@ from PySide6 import QtWidgets, QtCore, QtGui
 
 
 def build_grid(vertical_lines, horizontal_lines):
-    pass
+    CANVAS_WIDTH = 960
+    CANVAS_HEIGHT = 1000
+    vert_x_locations = []
+    horiz_y_locations = []
+
+    paint_x_range = range(50, CANVAS_WIDTH - 50)
+    random_x_lines = random.sample(paint_x_range, vertical_lines)
+    for lines in sorted(random_x_lines):
+        vert_x_locations.append(lines)
+
+    paint_y_range = range(50, CANVAS_HEIGHT - 50)
+    random_y_lines = random.sample(paint_y_range, horizontal_lines)
+    for lines in sorted(random_y_lines):
+        horiz_y_locations.append(lines)
+
 
 def build_colored_squares(square_amount, saturation):
     pass
 
 def build_signature(name, typeface, fontsize):
-        pass
+    pass
 
 
 class MondrianUI(QtWidgets.QDialog):
@@ -135,6 +149,10 @@ class MondrianCanvas(QtWidgets.QWidget):
         super().__init__()
         self.setMinimumSize(960, 1000)
 
+    def paintEvent(self, event):
+        paint = QtGui.QPainter(self)
+        paint.fillRect(self.rect(), QtGui.QColor('white'))
+        paint.end()
 
 def show_ui():
     app = QtWidgets.QApplication(sys.argv)
