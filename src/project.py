@@ -188,7 +188,6 @@ class MondrianUI(QtWidgets.QDialog):
                                                          horizontal_lines)
         self.canvas.vert_x_locations = vert_x_locations
         self.canvas.horiz_y_locations = horiz_y_locations
-        self.canvas.update()
         
         selected_rectangles, random_colors = build_rectangles(vert_x_locations,
                                                             horiz_y_locations,
@@ -196,7 +195,8 @@ class MondrianUI(QtWidgets.QDialog):
                                                             saturation)
         
         self.canvas.selected_rectangles = selected_rectangles
-        self.canvas.random_colors - random_colors
+        self.canvas.random_colors = random_colors
+        self.canvas.update()
 
         build_signature(name, typeface, fontsize)
 
@@ -217,6 +217,7 @@ class MondrianCanvas(QtWidgets.QWidget):
         thickpen = QtGui.QPen(QtGui.QColor('black'))
         thickpen.setWidth(8)
         paint.setPen(thickpen)
+        offset = 4
 
         for xpositions in self.vert_x_locations:
             paint.drawLine(xpositions, 0, xpositions, CANVAS_HEIGHT)
@@ -224,6 +225,14 @@ class MondrianCanvas(QtWidgets.QWidget):
         for ypositions in self.horiz_y_locations:
             paint.drawLine(0, ypositions, CANVAS_WIDTH, ypositions)
         
+        for num, rectangle in enumerate(self.selected_rectangles):
+            rectangle_x, rectangle_y, rectangle_width, rectangle_height = rectangle
+            color = self.random_colors[num % len(self.random_colors)]
+            
+            paint.fillRect(rectangle_x, rectangle_y,
+                           rectangle_width - offset,
+                           rectangle_height - offset, color)
+
         paint.end()
 
 def show_ui():
