@@ -34,7 +34,7 @@ def build_rectangles(vert_x_locations, horiz_y_locations,rectangle_amount,
     random_colors = build_rectangle_colors(saturation)
     selected_rectangles = random.sample(all_rectangles, rectangle_amount)
     
-    return selected_rectangles, random_colors
+    return selected_rectangles, random_colors, all_rectangles
 
 def build_rectangle_cells(xaxis_boundaries, yaxis_boundaries, rectangle_amount):
     """Builds the rectangle cells from boundaries"""
@@ -189,13 +189,15 @@ class MondrianUI(QtWidgets.QDialog):
         self.canvas.vert_x_locations = vert_x_locations
         self.canvas.horiz_y_locations = horiz_y_locations
         
-        selected_rectangles, random_colors = build_rectangles(vert_x_locations,
+        selected_rectangles, random_colors, all_rectangles = build_rectangles(
+                                                            vert_x_locations,
                                                             horiz_y_locations,
                                                             rectangle_amount,
                                                             saturation)
         
         self.canvas.selected_rectangles = selected_rectangles
         self.canvas.random_colors = random_colors
+        self.canvas.all_rectangles = all_rectangles
         self.canvas.update()
 
         build_signature(name, typeface, fontsize)
@@ -208,6 +210,7 @@ class MondrianCanvas(QtWidgets.QWidget):
         self.setMinimumSize(960, 1000)
         self.vert_x_locations = []
         self.horiz_y_locations = []
+        self.all_rectangles = []
         self.selected_rectangles = []
         self.random_colors = []
 
@@ -218,6 +221,15 @@ class MondrianCanvas(QtWidgets.QWidget):
         thickpen.setWidth(8)
         paint.setPen(thickpen)
         offset = 4
+
+        for rectangle in self.all_rectangles:
+            if rectangle not in self.selected_rectangles:
+                rectangle_x, rectangle_y, rectangle_width, rectangle_height = rectangle
+
+                paint.fillRect(rectangle_x + offset, rectangle_y + offset,
+                               rectangle_width - offset,
+                               rectangle_height - offset
+                               QtGui.QColor('white'))
 
         for xpositions in self.vert_x_locations:
             paint.drawLine(xpositions, 0, xpositions, CANVAS_HEIGHT)
