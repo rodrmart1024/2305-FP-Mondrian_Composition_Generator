@@ -213,6 +213,13 @@ class MondrianUI(QtWidgets.QDialog):
 
         self.canvas.update()
 
+    def advance_canvas(self, state):
+        """Advances the canvas to next state"""
+        self.canvas.paint_state = state
+        self.canvas.update()
+        if state == 3:
+            self.canvas.start_signature_fade()
+
 
 class MondrianCanvas(QtWidgets.QWidget):
 
@@ -227,6 +234,8 @@ class MondrianCanvas(QtWidgets.QWidget):
         self.signature_name = ''
         self.signature_typeface = 'Arial'
         self.signature_fontsize = 10
+        self.paint_state = 0
+        self.signature_opacity = 0.0
 
     def paintEvent(self, event):
         paint = QtGui.QPainter(self)
@@ -236,12 +245,11 @@ class MondrianCanvas(QtWidgets.QWidget):
             self.paint_grid(paint)
         if self.paint_state >= 2:
             self.paint_rectangles(paint)
-        
-        build_signature(paint, self.signature_name, self.signature_typeface,
-                        self.signature_fontsize)
+        if self.paint_state >= 3:
+            self.paint_signature(paint)
 
         paint.end()
-    
+
     def paint_grid(self, paint):
         """Animation that paints the grid"""
         thickpen = QtGui.QPen(QtGui.QColor('black'))
@@ -275,6 +283,13 @@ class MondrianCanvas(QtWidgets.QWidget):
             paint.fillRect(rectangle_x + offset, rectangle_y + offset,
                            rectangle_width - offset * 2,
                            rectangle_height - offset * 2, color)
+            
+    def paint_signature(self, paint):
+        """Animation that paints the signaature"""
+        paint.setOpacity(self.signature_opacity)
+        build_signature(paint, self.signature_name, self.signature_typeface,
+                        self.signature_fontsize)
+        paint.setOpacity(1.0)
 
 def show_ui():
     app = QtWidgets.QApplication(sys.argv)
