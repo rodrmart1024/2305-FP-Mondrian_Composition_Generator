@@ -6,7 +6,7 @@ CANVAS_WIDTH = 980
 CANVAS_HEIGHT = 980
 
 def build_grid(vertical_lines, horizontal_lines):
-    '''Function that Creates a list of random x y positions within a range'''
+    '''Builds a list of random x y positions for lines within a range'''
     vert_x_locations = []
     horiz_y_locations = []
 
@@ -24,7 +24,7 @@ def build_grid(vertical_lines, horizontal_lines):
 
 def build_rectangles(vert_x_locations, horiz_y_locations,rectangle_amount,
                           saturation):
-    """Builds the Colored Rectangles using cells and hsv"""
+    '''Call Builder to create cells and random colors'''
     xaxis_boundaries = [0] + vert_x_locations + [CANVAS_WIDTH]
     yaxis_boundaries = [0] + horiz_y_locations + [CANVAS_HEIGHT]
     all_rectangles, rectangle_amount = build_rectangle_cells(xaxis_boundaries,
@@ -37,7 +37,7 @@ def build_rectangles(vert_x_locations, horiz_y_locations,rectangle_amount,
     return selected_rectangles, random_colors, all_rectangles
 
 def build_rectangle_cells(xaxis_boundaries, yaxis_boundaries, rectangle_amount):
-    """Builds the rectangle cells from boundaries"""
+    '''Builds the cells from the x and y boundaries'''
     all_rectangles = []
 
     for x in range(len(xaxis_boundaries) - 1):
@@ -56,7 +56,7 @@ def build_rectangle_cells(xaxis_boundaries, yaxis_boundaries, rectangle_amount):
     return all_rectangles, rectangle_amount
 
 def build_rectangle_colors(saturation):
-    """Builds the three random colors for the rectangles"""
+    '''Builds the three random HSV colors for the rectangles'''
     hsv_saturation = int((saturation/100) * 255)
     random_colors = []
 
@@ -70,7 +70,7 @@ def build_rectangle_colors(saturation):
     return random_colors
 
 def build_signature(paint, name, typeface, fontsize):
-    """Paints the signature in the bottom right"""
+    '''Builds the signature in the bottom right usng margins'''
     signature_font = QtGui.QFont(typeface, fontsize)
     paint.setFont(signature_font)
     paint.setPen(QtGui.QPen(QtGui.QColor('black')))
@@ -84,6 +84,7 @@ def build_signature(paint, name, typeface, fontsize):
 class MondrianUI(QtWidgets.QDialog):
 
     def __init__(self):
+        '''Creates the Split Screen View of the Window'''
         super().__init__()
         self.setWindowTitle("Mondrian Inspired Generator")
         self.resize(1920, 980)
@@ -103,7 +104,7 @@ class MondrianUI(QtWidgets.QDialog):
         self.generate_button_ui()
 
     def grid_lines_ui(self):
-        '''Creates the UI for Vertical and Horizontal Lines'''
+        '''Creates the UI Spinbox for Vertical and Horizontal Lines'''
         grid_group = QtWidgets.QGroupBox('Grid Lines:')
         grid_ui_layout = QtWidgets.QFormLayout()
         grid_ui_layout.setSpacing(10)
@@ -124,7 +125,7 @@ class MondrianUI(QtWidgets.QDialog):
         self.layout.addWidget(grid_group)
 
     def rectangle_amount_ui(self):
-        '''Creates the UI for amount of Rectangles'''
+        '''Creates the UI Spinboxfor amount of Rectangles'''
         rectangle_group = QtWidgets.QGroupBox('Rectangles:')
         rectangle_ui_layout = QtWidgets.QFormLayout()
         rectangle_ui_layout.setSpacing(10)
@@ -139,11 +140,10 @@ class MondrianUI(QtWidgets.QDialog):
         self.layout.addWidget(rectangle_group)
 
     def signature_ui(self):
-        """Creates the Signature UI comprised of TypeFace, FontSize, Name"""
+        '''Creates the Signature UI comprised of TypeFace, FontSize, Name'''
         signature_group = QtWidgets.QGroupBox('Signature:')
         signature_ui_layout = QtWidgets.QFormLayout()
         signature_ui_layout.setSpacing(10)
-        # CHECK TO MAKE SURE METHOD WORKS AND ALSO GNERATE ARTWORK SETUP
         self.username_input = QtWidgets.QLineEdit()
         signature_ui_layout.addRow("Name: ", self.username_input) 
 
@@ -159,7 +159,7 @@ class MondrianUI(QtWidgets.QDialog):
         self.layout.addWidget(signature_group)
 
     def saturation_ui(self):
-        """Creates the Saturation UI where users can select percentages"""
+        '''Creates the Saturation UI Dropbox where users can select percentages'''
         saturation_group = QtWidgets.QGroupBox('Saturation:')
         saturation_ui_layout = QtWidgets.QFormLayout()
         saturation_ui_layout.setSpacing(10)
@@ -173,7 +173,7 @@ class MondrianUI(QtWidgets.QDialog):
         self.layout.addWidget(saturation_group)
 
     def generate_button_ui(self):
-        """Creates a UI Button"""
+        '''Creates a UI Button'''
         gen_button_layout = QtWidgets.QHBoxLayout()
         generate_btn = QtWidgets.QPushButton('Create Painting')
         generate_btn.clicked.connect(self.generate_artwork)
@@ -182,11 +182,10 @@ class MondrianUI(QtWidgets.QDialog):
         self.layout.addLayout(gen_button_layout)
 
     def generate_artwork(self):
-        """Collects from input UI and sends to Build"""
+        '''Collects from input UI and sends to Build'''
         vertical_lines = self.vertical_input.value()
         horizontal_lines = self.horizontal_input.value()
         rectangle_amount = self.rectangle_amount_input.value()
-        
 
         name = self.username_input.text()
         typeface = self.typeface_input.currentText()
@@ -217,7 +216,7 @@ class MondrianUI(QtWidgets.QDialog):
         QtCore.QTimer.singleShot(1800, lambda: self.advance_canvas(3))
 
     def advance_canvas(self, state):
-        """Advances the canvas to next state"""
+        '''Advances the canvas to next state which starts a redraw'''
         self.canvas.paint_state = state
         self.canvas.update()
         self.canvas.signature_opacity = 0.0
@@ -226,7 +225,7 @@ class MondrianUI(QtWidgets.QDialog):
             self.start_signature_fade()
     
     def start_signature_fade(self):
-        """Starts a fade timer for the signature"""
+        '''Starts a fade QTimer for the signature'''
         self.fade_timer = QtCore.QTimer()
         self.fade_timer.timeout.connect(self.fade_signature)
         self.fade_timer.start(30)
@@ -243,6 +242,7 @@ class MondrianUI(QtWidgets.QDialog):
 class MondrianCanvas(QtWidgets.QWidget):
 
     def __init__(self):
+        '''Initializes all drawable elements'''
         super().__init__()
         self.setMinimumSize(960, 980)
         self.vert_x_locations = []
@@ -257,8 +257,8 @@ class MondrianCanvas(QtWidgets.QWidget):
         self.signature_opacity = 0.0
 
     def paintEvent(self, event):
+        '''Master Painter that calls sub functions based off state'''
         paint = QtGui.QPainter(self)
-        paint.fillRect(self.rect(), QtGui.QColor('white'))
 
         if self.paint_state >= 1:
             self.paint_grid(paint)
@@ -270,7 +270,7 @@ class MondrianCanvas(QtWidgets.QWidget):
         paint.end()
 
     def paint_grid(self, paint):
-        """Animation that paints the grid"""
+        """Paints the vertical and horizontal lines onto canvas"""
         thickpen = QtGui.QPen(QtGui.QColor('black'))
         thickpen.setWidth(8)
         paint.setPen(thickpen)
@@ -282,7 +282,7 @@ class MondrianCanvas(QtWidgets.QWidget):
             paint.drawLine(0, ypositions, CANVAS_WIDTH, ypositions)
     
     def paint_rectangles(self, paint):
-        """Animation that paints the rectangles"""
+        """Paints the cells with their asssigned color"""
         paint.setPen(QtCore.Qt.NoPen)
         offset = 4
 
@@ -304,7 +304,7 @@ class MondrianCanvas(QtWidgets.QWidget):
                            rectangle_height - offset * 2, color)
             
     def paint_signature(self, paint):
-        """Animation that paints the signaature"""
+        '''Paints the siganture fading in'''
         paint.setOpacity(self.signature_opacity)
         build_signature(paint, self.signature_name, self.signature_typeface,
                         self.signature_fontsize)
