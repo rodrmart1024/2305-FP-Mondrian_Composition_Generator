@@ -236,9 +236,9 @@ class MondrianUI(QtWidgets.QDialog):
         self.canvas.signature_typeface = typeface
         self.canvas.signature_fontsize = fontsize
 
-        QtCore.QTimer.singleShot(300, lambda: self.advance_canvas(1))
-        QtCore.QTimer.singleShot(900, lambda: self.advance_canvas(2))
-        QtCore.QTimer.singleShot(1800, lambda: self.advance_canvas(3))
+        QtCore.QTimer.singleShot(600, lambda: self.advance_canvas(1))
+        QtCore.QTimer.singleShot(2000, lambda: self.advance_canvas(2))
+        QtCore.QTimer.singleShot(3000, lambda: self.advance_canvas(3))
 
     def advance_canvas(self, state):
         '''Advances the canvas to next state which starts a redraw'''
